@@ -12,6 +12,9 @@ using XrmToolBox.Extensibility.Interfaces;
 using Microsoft.Xrm.Sdk.Metadata.Query;
 using Microsoft.Xrm.Sdk.Messages;
 using Microsoft.Xrm.Sdk.Metadata;
+using System.Diagnostics;
+using Microsoft.Xrm.Sdk.Query;
+using Microsoft.Xrm.Sdk;
 
 namespace Innofactor.XTB.DateTimeBehaviorUtility
 {
@@ -118,6 +121,40 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                 }
             }
             Enabled = true;
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://msdn.microsoft.com/en-us/library/microsoft.xrm.sdk.messages.convertdateandtimebehaviorrequest.aspx");
+        }
+
+        private void btnAnalyze_Click(object sender, EventArgs e)
+        {
+            Analyze();
+        }
+
+        private void Analyze()
+        {
+            // TODO: Make this work async
+            // TODO: Query selected attributes
+            txtAnalysis.Text = "";
+            var fetch = @"<fetch aggregate='true' >
+  <entity name='contact' >
+    <attribute name='createdon' alias='First' aggregate='min' />
+    <attribute name='createdon' alias='Last' aggregate='max' />
+    <attribute name='contactid' alias='Count' aggregate='count' />
+    <attribute name='birthdate' alias='Births' aggregate='countcolumn' />
+  </entity>
+</fetch>";
+            var result = Service.RetrieveMultiple(new FetchExpression(fetch));
+            txtAnalysis.Text = 
+                $"Records: {((AliasedValue)result.Entities[0].Attributes["Count"]).Value}\n"+
+                $"With value: {((AliasedValue)result.Entities[0].Attributes["Births"]).Value}\n";
+        }
+
+        private void listAttributes_ItemChecked(object sender, ItemCheckedEventArgs e)
+        {
+            btnAnalyze.Enabled = listAttributes.CheckedItems.Count > 0;
         }
     }
 }
