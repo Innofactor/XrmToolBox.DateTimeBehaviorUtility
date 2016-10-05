@@ -34,8 +34,12 @@
             this.btnLoadAttributes = new System.Windows.Forms.ToolStripButton();
             this.pnlAttributes = new System.Windows.Forms.Panel();
             this.splitter1 = new System.Windows.Forms.Splitter();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.listAttributes = new System.Windows.Forms.ListView();
             this.label1 = new System.Windows.Forms.Label();
+            this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colBehavior = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colFormat = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.toolStrip1.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
             this.SuspendLayout();
@@ -73,32 +77,39 @@
             // pnlAttributes
             // 
             this.pnlAttributes.Controls.Add(this.label1);
-            this.pnlAttributes.Controls.Add(this.listView1);
+            this.pnlAttributes.Controls.Add(this.listAttributes);
             this.pnlAttributes.Dock = System.Windows.Forms.DockStyle.Left;
             this.pnlAttributes.Location = new System.Drawing.Point(0, 25);
             this.pnlAttributes.Name = "pnlAttributes";
-            this.pnlAttributes.Size = new System.Drawing.Size(383, 595);
+            this.pnlAttributes.Size = new System.Drawing.Size(555, 595);
             this.pnlAttributes.TabIndex = 1;
             // 
             // splitter1
             // 
-            this.splitter1.Location = new System.Drawing.Point(383, 25);
+            this.splitter1.Location = new System.Drawing.Point(555, 25);
             this.splitter1.Name = "splitter1";
             this.splitter1.Size = new System.Drawing.Size(3, 595);
             this.splitter1.TabIndex = 2;
             this.splitter1.TabStop = false;
             // 
-            // listView1
+            // listAttributes
             // 
-            this.listView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.listAttributes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.listView1.Location = new System.Drawing.Point(7, 20);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(373, 572);
-            this.listView1.Sorting = System.Windows.Forms.SortOrder.Ascending;
-            this.listView1.TabIndex = 0;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.listAttributes.CheckBoxes = true;
+            this.listAttributes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.colName,
+            this.colLogicalName,
+            this.colFormat,
+            this.colBehavior});
+            this.listAttributes.Location = new System.Drawing.Point(7, 20);
+            this.listAttributes.Name = "listAttributes";
+            this.listAttributes.Size = new System.Drawing.Size(545, 572);
+            this.listAttributes.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.listAttributes.TabIndex = 0;
+            this.listAttributes.UseCompatibleStateImageBehavior = false;
+            this.listAttributes.View = System.Windows.Forms.View.Details;
             // 
             // label1
             // 
@@ -108,6 +119,26 @@
             this.label1.Size = new System.Drawing.Size(107, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Entites and Attributes";
+            // 
+            // colName
+            // 
+            this.colName.Text = "Attribute";
+            this.colName.Width = 139;
+            // 
+            // colBehavior
+            // 
+            this.colBehavior.Text = "Behavior";
+            this.colBehavior.Width = 108;
+            // 
+            // colFormat
+            // 
+            this.colFormat.Text = "Format";
+            this.colFormat.Width = 103;
+            // 
+            // colLogicalName
+            // 
+            this.colLogicalName.Text = "Logical Name";
+            this.colLogicalName.Width = 168;
             // 
             // DateTimeBehaviorUtility
             // 
@@ -135,7 +166,11 @@
         private System.Windows.Forms.ToolStripButton btnLoadAttributes;
         private System.Windows.Forms.Panel pnlAttributes;
         private System.Windows.Forms.Splitter splitter1;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.ListView listAttributes;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ColumnHeader colName;
+        private System.Windows.Forms.ColumnHeader colBehavior;
+        private System.Windows.Forms.ColumnHeader colFormat;
+        private System.Windows.Forms.ColumnHeader colLogicalName;
     }
 }
