@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Cinteros.XrmToolBox.PluginTraceViewer</id>
+    <version>1.0.0</version>
+    <title>Plug-in Trace Viewer</title>
+    <authors>Jonas Rapp, Innofactor AB</authors>
+    <owners>Innofactor</owners>
+    <projectUrl>http://cinteros.xrmtoolbox.com</projectUrl>
+    <iconUrl>http://rappen.net/Cinteros/PTV-if.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Investigate the Plug-in Trace Log with easy filtering and display possibilities</description>
+    <summary>Investigate the Plug-in Trace Log with easy filtering and display possibilities</summary>
+    <releaseNotes>    
+    Enables you to filter and find information from the Plug-in Trace Log in CRM.
+    </releaseNotes>
+    <copyright>Copyright 2016 Innofactor AB</copyright>
+    <tags>XrmToolBox Plugins PluginTraceViewer</tags>
+    <dependencies>
+      <dependency id="XrmToolBox" version="1.2016.3.30" />
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Cinteros.XTB.PluginTraceViewer\bin\Release\Cinteros.XTB.PluginTraceViewer.dll" target="lib\net452\Plugins" />
+    <file src="Cinteros.XTB.PluginTraceViewer\bin\Release\Cinteros.Xrm.CRMWinForm.dll" target="lib\net452\Plugins" />
+  </files>
+</package>
