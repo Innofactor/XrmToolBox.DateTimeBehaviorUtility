@@ -49,6 +49,8 @@
             this.gbAnalyze = new System.Windows.Forms.GroupBox();
             this.txtAnalysis = new System.Windows.Forms.TextBox();
             this.btnAnalyze = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.linkConvertJob = new System.Windows.Forms.LinkLabel();
             this.toolStrip1.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
             this.pnlActions.SuspendLayout();
@@ -166,13 +168,15 @@
             // 
             // gbDateOnly
             // 
+            this.gbDateOnly.Controls.Add(this.linkConvertJob);
+            this.gbDateOnly.Controls.Add(this.label3);
             this.gbDateOnly.Controls.Add(this.btnConvertDateOnly);
             this.gbDateOnly.Controls.Add(this.linkConvertRequestUrl);
             this.gbDateOnly.Controls.Add(this.label2);
             this.gbDateOnly.Dock = System.Windows.Forms.DockStyle.Top;
             this.gbDateOnly.Location = new System.Drawing.Point(0, 160);
             this.gbDateOnly.Name = "gbDateOnly";
-            this.gbDateOnly.Size = new System.Drawing.Size(450, 70);
+            this.gbDateOnly.Size = new System.Drawing.Size(450, 85);
             this.gbDateOnly.TabIndex = 0;
             this.gbDateOnly.TabStop = false;
             this.gbDateOnly.Text = "DateOnly";
@@ -180,12 +184,14 @@
             // btnConvertDateOnly
             // 
             this.btnConvertDateOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConvertDateOnly.Enabled = false;
             this.btnConvertDateOnly.Location = new System.Drawing.Point(343, 20);
             this.btnConvertDateOnly.Name = "btnConvertDateOnly";
             this.btnConvertDateOnly.Size = new System.Drawing.Size(101, 23);
             this.btnConvertDateOnly.TabIndex = 2;
             this.btnConvertDateOnly.Text = "Convert";
             this.btnConvertDateOnly.UseVisualStyleBackColor = true;
+            this.btnConvertDateOnly.Click += new System.EventHandler(this.btnConvertDateOnly_Click);
             // 
             // linkConvertRequestUrl
             // 
@@ -252,6 +258,26 @@
             this.btnAnalyze.UseVisualStyleBackColor = true;
             this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 66);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(160, 13);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "Click to open system job record: ";
+            // 
+            // linkConvertJob
+            // 
+            this.linkConvertJob.AutoSize = true;
+            this.linkConvertJob.Location = new System.Drawing.Point(176, 66);
+            this.linkConvertJob.Name = "linkConvertJob";
+            this.linkConvertJob.Size = new System.Drawing.Size(87, 13);
+            this.linkConvertJob.TabIndex = 4;
+            this.linkConvertJob.TabStop = true;
+            this.linkConvertJob.Text = "<no job created>";
+            this.linkConvertJob.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkConvertJob_LinkClicked);
+            // 
             // DateTimeBehaviorUtility
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -299,5 +325,7 @@
         private System.Windows.Forms.Splitter splitter2;
         private System.Windows.Forms.TextBox txtAnalysis;
         private System.Windows.Forms.Button btnAnalyze;
+        private System.Windows.Forms.LinkLabel linkConvertJob;
+        private System.Windows.Forms.Label label3;
     }
 }

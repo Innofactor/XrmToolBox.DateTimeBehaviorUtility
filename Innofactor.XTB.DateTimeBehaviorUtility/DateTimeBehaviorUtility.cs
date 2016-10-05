@@ -155,6 +155,54 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
         private void listAttributes_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
             btnAnalyze.Enabled = listAttributes.CheckedItems.Count > 0;
+            btnConvertDateOnly.Enabled = listAttributes.CheckedItems.Count > 0;
+        }
+
+        private void btnConvertDateOnly_Click(object sender, EventArgs e)
+        {
+            // TODO: Read selected attributes instead
+            var req = new ConvertDateAndTimeBehaviorRequest();
+            req.Attributes = new EntityAttributeCollection();
+            var contactattributes = new System.Collections.Specialized.StringCollection();
+            contactattributes.Add("birthdate");
+            contactattributes.Add("new_datetime");
+            req.Attributes.Add("contact", contactattributes);
+            req.ConversionRule = DateTimeBehaviorConversionRule.OwnerTimeZone.Value;
+            req.AutoConvert = true;
+            var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
+            linkConvertJob.Text = resp.JobId.ToString();
+        }
+
+        private void linkConvertJob_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var url = GetEntityReferenceUrl(new EntityReference("asyncoperation", new Guid(linkConvertJob.Text)));
+            if (!string.IsNullOrEmpty(url))
+            {
+                Process.Start(url);
+            }
+        }
+
+        private string GetEntityReferenceUrl(EntityReference entref)
+        {
+            if (!string.IsNullOrEmpty(entref.LogicalName) && !entref.Id.Equals(Guid.Empty))
+            {
+                var url = ConnectionDetail.WebApplicationUrl;
+                if (string.IsNullOrEmpty(url))
+                {
+                    url = string.Concat(ConnectionDetail.ServerName, "/", ConnectionDetail.Organization);
+                    if (!url.ToLower().StartsWith("http"))
+                    {
+                        url = string.Concat("http://", url);
+                    }
+                }
+                url = string.Concat(url,
+                    "/main.aspx?etn=",
+                    entref.LogicalName,
+                    "&pagetype=entityrecord&id=",
+                    entref.Id.ToString());
+                return url;
+            }
+            return string.Empty;
         }
     }
 }
