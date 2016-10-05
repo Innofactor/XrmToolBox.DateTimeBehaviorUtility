@@ -20,15 +20,13 @@ build:
   verbosity: normal
 after_build:
 - cmd: >-
-    nuget pack Cinteros.XTB.PluginTraceViewer.nuspec -Version %APPVEYOR_BUILD_VERSION%
+    nuget pack Innofactor.XTB.DateTimeBehaviorUtility.nuspec -Version %APPVEYOR_BUILD_VERSION%
 
-    7z a Cinteros.XTB.PluginTraceViewer_%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\Cinteros.XTB.PluginTraceViewer\bin\%CONFIGURATION%\Cinteros.XTB.PluginTraceViewer.dll
+    7z a Innofactor.XTB.DateTimeBehaviorUtility_%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\Innofactor.XTB.DateTimeBehaviorUtility\bin\%CONFIGURATION%\Innofactor.XTB.DateTimeBehaviorUtility.dll
 
-    7z a Cinteros.XTB.PluginTraceViewer_%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\Cinteros.XTB.PluginTraceViewer\bin\%CONFIGURATION%\Cinteros.Xrm.CRMWinForm.dll
-
-    appveyor PushArtifact Cinteros.XTB.PluginTraceViewer_%APPVEYOR_BUILD_VERSION%.zip
+    appveyor PushArtifact Innofactor.XTB.DateTimeBehaviorUtility_%APPVEYOR_BUILD_VERSION%.zip
 artifacts:
-- path: '**\Cinteros.XrmToolBox.PluginTraceViewer.*.nupkg'
+- path: '**\Innofactor.XTB.DateTimeBehaviorUtility.*.nupkg'
 deploy:
 - provider: Environment
   name: GitHubCintXTB

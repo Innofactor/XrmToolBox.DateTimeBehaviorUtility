@@ -5,6 +5,12 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Innofactor.XTB.DateTimeBehaviorUtility", "Innofactor.XTB.DateTimeBehaviorUtility\Innofactor.XTB.DateTimeBehaviorUtility.csproj", "{E6B61A0F-1214-4521-A515-C397235A1B64}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9EDF54AB-8206-41EB-A096-E7812CDA4E27}"
+	ProjectSection(SolutionItems) = preProject
+		Innofactor.XTB.DateTimeBehaviorUtility.nuspec = Innofactor.XTB.DateTimeBehaviorUtility.nuspec
+		Innofactor.XTB.DateTimeBehaviorUtility.yml = Innofactor.XTB.DateTimeBehaviorUtility.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
