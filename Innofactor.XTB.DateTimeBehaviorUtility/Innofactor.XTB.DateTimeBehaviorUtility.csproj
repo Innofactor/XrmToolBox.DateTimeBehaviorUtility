@@ -115,6 +115,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="CRMTimeZone.cs" />
     <Compile Include="DateTimeBehaviorUtility.cs">
       <SubType>UserControl</SubType>
     </Compile>
