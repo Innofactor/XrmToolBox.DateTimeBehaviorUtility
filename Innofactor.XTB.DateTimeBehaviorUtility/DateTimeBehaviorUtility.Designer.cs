@@ -42,6 +42,12 @@
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.gbDateOnly = new System.Windows.Forms.GroupBox();
+            this.cmbCountryCodes = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.cmbConversionRule = new System.Windows.Forms.ComboBox();
+            this.cbAutoConvert = new System.Windows.Forms.CheckBox();
+            this.linkConvertJob = new System.Windows.Forms.LinkLabel();
+            this.label3 = new System.Windows.Forms.Label();
             this.btnConvertDateOnly = new System.Windows.Forms.Button();
             this.linkConvertRequestUrl = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
@@ -49,8 +55,7 @@
             this.gbAnalyze = new System.Windows.Forms.GroupBox();
             this.txtAnalysis = new System.Windows.Forms.TextBox();
             this.btnAnalyze = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.linkConvertJob = new System.Windows.Forms.LinkLabel();
+            this.label5 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
             this.pnlActions.SuspendLayout();
@@ -168,6 +173,11 @@
             // 
             // gbDateOnly
             // 
+            this.gbDateOnly.Controls.Add(this.label5);
+            this.gbDateOnly.Controls.Add(this.cmbCountryCodes);
+            this.gbDateOnly.Controls.Add(this.label4);
+            this.gbDateOnly.Controls.Add(this.cmbConversionRule);
+            this.gbDateOnly.Controls.Add(this.cbAutoConvert);
             this.gbDateOnly.Controls.Add(this.linkConvertJob);
             this.gbDateOnly.Controls.Add(this.label3);
             this.gbDateOnly.Controls.Add(this.btnConvertDateOnly);
@@ -176,16 +186,79 @@
             this.gbDateOnly.Dock = System.Windows.Forms.DockStyle.Top;
             this.gbDateOnly.Location = new System.Drawing.Point(0, 160);
             this.gbDateOnly.Name = "gbDateOnly";
-            this.gbDateOnly.Size = new System.Drawing.Size(450, 85);
+            this.gbDateOnly.Size = new System.Drawing.Size(450, 296);
             this.gbDateOnly.TabIndex = 0;
             this.gbDateOnly.TabStop = false;
             this.gbDateOnly.Text = "DateOnly";
+            // 
+            // cmbCountryCodes
+            // 
+            this.cmbCountryCodes.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbCountryCodes.Enabled = false;
+            this.cmbCountryCodes.FormattingEnabled = true;
+            this.cmbCountryCodes.Location = new System.Drawing.Point(10, 169);
+            this.cmbCountryCodes.Name = "cmbCountryCodes";
+            this.cmbCountryCodes.Size = new System.Drawing.Size(188, 21);
+            this.cmbCountryCodes.TabIndex = 8;
+            this.cmbCountryCodes.SelectedIndexChanged += new System.EventHandler(this.cmbCountryCodes_SelectedIndexChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(219, 135);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(80, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "Conversion rule";
+            // 
+            // cmbConversionRule
+            // 
+            this.cmbConversionRule.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbConversionRule.Enabled = false;
+            this.cmbConversionRule.FormattingEnabled = true;
+            this.cmbConversionRule.Location = new System.Drawing.Point(10, 132);
+            this.cmbConversionRule.Name = "cmbConversionRule";
+            this.cmbConversionRule.Size = new System.Drawing.Size(188, 21);
+            this.cmbConversionRule.TabIndex = 6;
+            this.cmbConversionRule.SelectedIndexChanged += new System.EventHandler(this.cmbConversionRule_SelectedIndexChanged);
+            // 
+            // cbAutoConvert
+            // 
+            this.cbAutoConvert.AutoSize = true;
+            this.cbAutoConvert.Enabled = false;
+            this.cbAutoConvert.Location = new System.Drawing.Point(13, 206);
+            this.cbAutoConvert.Name = "cbAutoConvert";
+            this.cbAutoConvert.Size = new System.Drawing.Size(87, 17);
+            this.cbAutoConvert.TabIndex = 5;
+            this.cbAutoConvert.Text = "Auto convert";
+            this.cbAutoConvert.UseVisualStyleBackColor = true;
+            this.cbAutoConvert.CheckedChanged += new System.EventHandler(this.cbAutoConvert_CheckedChanged);
+            // 
+            // linkConvertJob
+            // 
+            this.linkConvertJob.AutoSize = true;
+            this.linkConvertJob.Location = new System.Drawing.Point(176, 278);
+            this.linkConvertJob.Name = "linkConvertJob";
+            this.linkConvertJob.Size = new System.Drawing.Size(87, 13);
+            this.linkConvertJob.TabIndex = 4;
+            this.linkConvertJob.TabStop = true;
+            this.linkConvertJob.Text = "<no job created>";
+            this.linkConvertJob.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkConvertJob_LinkClicked);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 278);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(160, 13);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "Click to open system job record: ";
             // 
             // btnConvertDateOnly
             // 
             this.btnConvertDateOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConvertDateOnly.Enabled = false;
-            this.btnConvertDateOnly.Location = new System.Drawing.Point(343, 20);
+            this.btnConvertDateOnly.Location = new System.Drawing.Point(343, 206);
             this.btnConvertDateOnly.Name = "btnConvertDateOnly";
             this.btnConvertDateOnly.Size = new System.Drawing.Size(101, 23);
             this.btnConvertDateOnly.TabIndex = 2;
@@ -258,25 +331,14 @@
             this.btnAnalyze.UseVisualStyleBackColor = true;
             this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
             // 
-            // label3
+            // label5
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 66);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(160, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Click to open system job record: ";
-            // 
-            // linkConvertJob
-            // 
-            this.linkConvertJob.AutoSize = true;
-            this.linkConvertJob.Location = new System.Drawing.Point(176, 66);
-            this.linkConvertJob.Name = "linkConvertJob";
-            this.linkConvertJob.Size = new System.Drawing.Size(87, 13);
-            this.linkConvertJob.TabIndex = 4;
-            this.linkConvertJob.TabStop = true;
-            this.linkConvertJob.Text = "<no job created>";
-            this.linkConvertJob.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkConvertJob_LinkClicked);
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(222, 176);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(70, 13);
+            this.label5.TabIndex = 9;
+            this.label5.Text = "Country code";
             // 
             // DateTimeBehaviorUtility
             // 
@@ -327,5 +389,10 @@
         private System.Windows.Forms.Button btnAnalyze;
         private System.Windows.Forms.LinkLabel linkConvertJob;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox cbAutoConvert;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox cmbConversionRule;
+        private System.Windows.Forms.ComboBox cmbCountryCodes;
+        private System.Windows.Forms.Label label5;
     }
 }

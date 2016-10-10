@@ -15,6 +15,7 @@ using Microsoft.Xrm.Sdk.Metadata;
 using System.Diagnostics;
 using Microsoft.Xrm.Sdk.Query;
 using Microsoft.Xrm.Sdk;
+using System.Collections.Specialized;
 
 namespace Innofactor.XTB.DateTimeBehaviorUtility
 {
@@ -24,9 +25,14 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         public string UserName { get { return "Innofactor"; } }
 
+        public Dictionary<string, Int32> CountryCodes = new Dictionary<string, Int32>();
+
         public DateTimeBehaviorUtility()
         {
             InitializeComponent();
+            //Add items to comboBox
+            LoadComboBox();
+            LoadCountryCodes();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -98,6 +104,22 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                 }
             };
             WorkAsync(asyncinfo);
+
+        }
+
+        private void LoadComboBox()
+        {
+            cmbConversionRule.Items.Add(DateTimeBehaviorConversionRule.CreatedByTimeZone.Value);
+            cmbConversionRule.Items.Add(DateTimeBehaviorConversionRule.LastUpdatedByTimeZone.Value);
+            cmbConversionRule.Items.Add(DateTimeBehaviorConversionRule.OwnerTimeZone.Value);
+            cmbConversionRule.Items.Add(DateTimeBehaviorConversionRule.SpecificTimeZone.Value);
+        }
+
+        private void LoadCountryCodes()
+        {
+            cmbCountryCodes.Items.Clear();
+            cmbCountryCodes.Items.Add(" - select -");
+            cmbCountryCodes.Items.AddRange(new CRMTimeZoneList().ToArray());
         }
 
         private void PopulateAttributes(EntityMetadataCollection entities)
@@ -147,28 +169,81 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
   </entity>
 </fetch>";
             var result = Service.RetrieveMultiple(new FetchExpression(fetch));
-            txtAnalysis.Text = 
-                $"Records: {((AliasedValue)result.Entities[0].Attributes["Count"]).Value}\n"+
+            txtAnalysis.Text =
+                $"Records: {((AliasedValue)result.Entities[0].Attributes["Count"]).Value}\n" +
                 $"With value: {((AliasedValue)result.Entities[0].Attributes["Births"]).Value}\n";
         }
 
         private void listAttributes_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
+            cmbConversionRule.Enabled = listAttributes.CheckedItems.Count > 0;
+            cbAutoConvert.Enabled = listAttributes.CheckedItems.Count > 0;
+            EnableAnalyzeBtn();
+            EnableConvertBtn();
+        }
+
+        private void EnableConvertBtn()
+        {
+            //btnConvertDateOnly.Enabled = listAttributes.CheckedItems.Count > 0;
+            if (listAttributes.CheckedItems.Count > 0 && cmbConversionRule.Text != null)
+            {
+                if (cmbConversionRule.Text != DateTimeBehaviorConversionRule.SpecificTimeZone.Value)
+                {
+                    btnConvertDateOnly.Enabled = true;
+                }
+                else if (cmbConversionRule.Text == DateTimeBehaviorConversionRule.SpecificTimeZone.Value)
+                {
+                    if (cmbCountryCodes.SelectedItem != null)
+                    {
+                        btnConvertDateOnly.Enabled = true;
+                    }
+                }
+                else {
+                    btnConvertDateOnly.Enabled = false;
+                }
+            }
+        }
+
+        private void EnableAnalyzeBtn()
+        {
             btnAnalyze.Enabled = listAttributes.CheckedItems.Count > 0;
-            btnConvertDateOnly.Enabled = listAttributes.CheckedItems.Count > 0;
         }
 
         private void btnConvertDateOnly_Click(object sender, EventArgs e)
         {
-            // TODO: Read selected attributes instead
+
+            var tz = cmbCountryCodes.SelectedItem;
+            int tzc = 0;
+            if (tz is CRMTimeZone)
+            {
+                tzc = ((CRMTimeZone)tz).TimeZoneCode;
+            }
+
             var req = new ConvertDateAndTimeBehaviorRequest();
-            req.Attributes = new EntityAttributeCollection();
-            var contactattributes = new System.Collections.Specialized.StringCollection();
-            contactattributes.Add("birthdate");
-            contactattributes.Add("new_datetime");
-            req.Attributes.Add("contact", contactattributes);
-            req.ConversionRule = DateTimeBehaviorConversionRule.OwnerTimeZone.Value;
-            req.AutoConvert = true;
+            var checkedEntityAttributes = new EntityAttributeCollection();
+
+            foreach (ListViewItem item in listAttributes.CheckedItems)
+            {
+                var entity = item.Group.Name;
+                var attribute = item.Name;
+                if (!checkedEntityAttributes.ContainsKey(entity))
+                {
+                    checkedEntityAttributes.Add(entity, new StringCollection());
+                }
+                checkedEntityAttributes[entity].Add(attribute);
+            }
+            req.Attributes = checkedEntityAttributes;
+
+            req.ConversionRule = cmbConversionRule.Text;
+
+            if (cmbConversionRule.Text == DateTimeBehaviorConversionRule.SpecificTimeZone.Value)
+            {
+                req.TimeZoneCode = tzc;
+            }
+
+            req.AutoConvert = cbAutoConvert.Checked;
+
+            //Execute
             var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
             linkConvertJob.Text = resp.JobId.ToString();
         }
@@ -203,6 +278,36 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                 return url;
             }
             return string.Empty;
+        }
+
+        private void cbAutoConvert_CheckedChanged(object sender, EventArgs e)
+        {
+            if (cbAutoConvert.Checked)
+            {
+
+            }
+        }
+
+        private void cmbConversionRule_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (cmbConversionRule.Text == DateTimeBehaviorConversionRule.SpecificTimeZone.Value)
+            {
+                cmbCountryCodes.Enabled = true;
+            }
+            else
+            {
+                cmbCountryCodes.SelectedIndex = -1;
+                cmbCountryCodes.Enabled = false;
+            }
+
+            EnableAnalyzeBtn();
+            EnableConvertBtn();
+        }
+
+        private void cmbCountryCodes_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            EnableAnalyzeBtn();
+            EnableConvertBtn();
         }
     }
 }
