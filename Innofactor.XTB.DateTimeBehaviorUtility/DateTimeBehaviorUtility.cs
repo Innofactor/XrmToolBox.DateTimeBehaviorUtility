@@ -159,19 +159,47 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
         {
             // TODO: Make this work async
             // TODO: Query selected attributes
-            txtAnalysis.Text = "";
-            var fetch = @"<fetch aggregate='true' >
-  <entity name='contact' >
-    <attribute name='createdon' alias='First' aggregate='min' />
-    <attribute name='createdon' alias='Last' aggregate='max' />
-    <attribute name='contactid' alias='Count' aggregate='count' />
-    <attribute name='birthdate' alias='Births' aggregate='countcolumn' />
-  </entity>
-</fetch>";
-            var result = Service.RetrieveMultiple(new FetchExpression(fetch));
-            txtAnalysis.Text =
-                $"Records: {((AliasedValue)result.Entities[0].Attributes["Count"]).Value}\n" +
-                $"With value: {((AliasedValue)result.Entities[0].Attributes["Births"]).Value}\n";
+            listAnalysis.Items.Clear();
+
+            var entityAttributes = GetSelectedEntityAttributes();
+            foreach (var entity in entityAttributes)
+            {
+                var group = listAnalysis.Groups.Add(entity.Key, $"{entity.Key})");
+                var item = new ListViewItem(group);
+                item.Name = "counting";
+                item.Text = "Counting records...";
+                listAnalysis.Items.Add(item);
+                var fetchAll = $"<fetch aggregate='true' ><entity name='{entity.Key}' ><attribute name='createdon' alias='Count' aggregate='count' /></entity></fetch>";
+                try
+                {
+                    var resultAll = Service.RetrieveMultiple(new FetchExpression(fetchAll));
+                    group.Header = $"{entity.Key} - {((AliasedValue)resultAll.Entities[0].Attributes["Count"]).Value} records";
+                    listAnalysis.Items.Remove(item);
+                }
+                catch (Exception ex)
+                {
+                    group.Header = $"{entity.Key} - Unable to retrieve record count";
+                    item.Text = ex.Message;
+                }
+                foreach (var attribute in entity.Value)
+                {
+                    item = new ListViewItem(group);
+                    item.Name = attribute;
+                    item.Text = attribute;
+                    item.SubItems.Add(attribute);
+                    listAnalysis.Items.Add(item);
+                    var fetchAttr = $"<fetch aggregate='true' ><entity name='{entity.Key}' ><attribute name='{attribute}' alias='Count' aggregate='countcolumn' /></entity></fetch>";
+                    try
+                    {
+                        var resultAttr = Service.RetrieveMultiple(new FetchExpression(fetchAttr));
+                        item.SubItems.Add(((AliasedValue)resultAttr.Entities[0].Attributes["Count"]).Value.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        item.SubItems.Add(ex.Message);
+                    }
+                }
+            }
         }
 
         private void listAttributes_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -184,24 +212,10 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void EnableConvertBtn()
         {
-            //btnConvertDateOnly.Enabled = listAttributes.CheckedItems.Count > 0;
-            if (listAttributes.CheckedItems.Count > 0 && cmbConversionRule.Text != null)
-            {
-                if (cmbConversionRule.Text != DateTimeBehaviorConversionRule.SpecificTimeZone.Value)
-                {
-                    btnConvertDateOnly.Enabled = true;
-                }
-                else if (cmbConversionRule.Text == DateTimeBehaviorConversionRule.SpecificTimeZone.Value)
-                {
-                    if (cmbCountryCodes.SelectedItem != null)
-                    {
-                        btnConvertDateOnly.Enabled = true;
-                    }
-                }
-                else {
-                    btnConvertDateOnly.Enabled = false;
-                }
-            }
+            btnConvertDateOnly.Enabled =
+                listAttributes.CheckedItems.Count > 0 &&
+                cmbConversionRule.SelectedItem != null &&
+                (cmbCountryCodes.SelectedItem is CRMTimeZone || cmbConversionRule.SelectedItem.ToString() != DateTimeBehaviorConversionRule.SpecificTimeZone.Value);
         }
 
         private void EnableAnalyzeBtn()
@@ -211,15 +225,24 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void btnConvertDateOnly_Click(object sender, EventArgs e)
         {
-
-            var tz = cmbCountryCodes.SelectedItem;
-            int tzc = 0;
-            if (tz is CRMTimeZone)
-            {
-                tzc = ((CRMTimeZone)tz).TimeZoneCode;
-            }
+            var tz = cmbCountryCodes.SelectedItem as CRMTimeZone;
 
             var req = new ConvertDateAndTimeBehaviorRequest();
+            req.Attributes = GetSelectedEntityAttributes();
+            req.ConversionRule = cmbConversionRule.SelectedItem.ToString();
+            if (tz != null)
+            {
+                req.TimeZoneCode = tz.TimeZoneCode;
+            }
+            req.AutoConvert = cbAutoConvert.Checked;
+
+            //Execute
+            var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
+            linkConvertJob.Text = resp.JobId.ToString();
+        }
+
+        private EntityAttributeCollection GetSelectedEntityAttributes()
+        {
             var checkedEntityAttributes = new EntityAttributeCollection();
 
             foreach (ListViewItem item in listAttributes.CheckedItems)
@@ -232,20 +255,8 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                 }
                 checkedEntityAttributes[entity].Add(attribute);
             }
-            req.Attributes = checkedEntityAttributes;
 
-            req.ConversionRule = cmbConversionRule.Text;
-
-            if (cmbConversionRule.Text == DateTimeBehaviorConversionRule.SpecificTimeZone.Value)
-            {
-                req.TimeZoneCode = tzc;
-            }
-
-            req.AutoConvert = cbAutoConvert.Checked;
-
-            //Execute
-            var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
-            linkConvertJob.Text = resp.JobId.ToString();
+            return checkedEntityAttributes;
         }
 
         private void linkConvertJob_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -278,14 +289,6 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                 return url;
             }
             return string.Empty;
-        }
-
-        private void cbAutoConvert_CheckedChanged(object sender, EventArgs e)
-        {
-            if (cbAutoConvert.Checked)
-            {
-
-            }
         }
 
         private void cmbConversionRule_SelectedIndexChanged(object sender, EventArgs e)
