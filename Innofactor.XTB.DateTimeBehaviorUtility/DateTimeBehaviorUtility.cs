@@ -157,8 +157,6 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void Analyze()
         {
-            // TODO: Make this work async
-            // TODO: Query selected attributes
             listAnalysis.Items.Clear();
 
             var entityAttributes = GetSelectedEntityAttributes();
@@ -186,20 +184,60 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                     item = new ListViewItem(group);
                     item.Name = attribute;
                     item.Text = attribute;
-                    item.SubItems.Add(attribute);
+                    var subitem = item.SubItems.Add(attribute);
+                    subitem.Tag = null;
                     listAnalysis.Items.Add(item);
-                    var fetchAttr = $"<fetch aggregate='true' ><entity name='{entity.Key}' ><attribute name='{attribute}' alias='Count' aggregate='countcolumn' /></entity></fetch>";
-                    try
+                }
+                AnalyzeNextAttribute();
+            }
+        }
+
+        private void AnalyzeNextAttribute()
+        {
+            var attribute = GetNextUnAnalyzedAttribute();
+            var entity = attribute?.Group;
+            if (attribute == null || entity == null)
+            {
+                return;
+            }
+            var fetchAttr = $"<fetch aggregate='true' ><entity name='{entity.Name}' ><attribute name='{attribute.Name}' alias='Count' aggregate='countcolumn' /></entity></fetch>";
+
+            var asyncinfo = new WorkAsyncInfo
+            {
+                Message = $"Analyzing {entity.Name}.{attribute.Name}",
+                Work = (worker, args) =>
+                {
+                    var resultAttr = Service.RetrieveMultiple(new FetchExpression(fetchAttr));
+                    args.Result = ((AliasedValue)resultAttr.Entities[0].Attributes["Count"]).Value;
+                },
+                PostWorkCallBack = (args) =>
+                {
+                    if (args.Error != null)
                     {
-                        var resultAttr = Service.RetrieveMultiple(new FetchExpression(fetchAttr));
-                        item.SubItems.Add(((AliasedValue)resultAttr.Entities[0].Attributes["Count"]).Value.ToString());
+                        attribute.SubItems.Add(args.Error.Message);
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        item.SubItems.Add(ex.Message);
+                        attribute.SubItems.Add(args.Result.ToString());
+                        attribute.Tag = args.Result;
                     }
                 }
+            };
+            WorkAsync(asyncinfo);
+            AnalyzeNextAttribute();
+        }
+
+        private ListViewItem GetNextUnAnalyzedAttribute()
+        {
+            foreach (ListViewItem item in listAnalysis.Items)
+            {
+                if (item.Tag == null)
+                {
+                    item.Tag = 0;
+                    return item;
+                }
             }
+            return null;
         }
 
         private void listAttributes_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -302,15 +340,17 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                 cmbCountryCodes.SelectedIndex = -1;
                 cmbCountryCodes.Enabled = false;
             }
-
-            EnableAnalyzeBtn();
             EnableConvertBtn();
         }
 
         private void cmbCountryCodes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            EnableAnalyzeBtn();
             EnableConvertBtn();
+        }
+
+        private void linkConvertJob_TextChanged(Object sender, EventArgs e)
+        {
+            linkConvertJob.Enabled = Guid.TryParse(linkConvertJob.Text, out Guid g);
         }
     }
 }
