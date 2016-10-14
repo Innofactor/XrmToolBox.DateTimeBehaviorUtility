@@ -350,7 +350,8 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void linkConvertJob_TextChanged(Object sender, EventArgs e)
         {
-            linkConvertJob.Enabled = Guid.TryParse(linkConvertJob.Text, out Guid g);
+            Guid g;
+            linkConvertJob.Enabled = Guid.TryParse(linkConvertJob.Text, out g);
         }
     }
 }
