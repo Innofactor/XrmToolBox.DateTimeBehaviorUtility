@@ -155,89 +155,146 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             Analyze();
         }
 
+        private void UpdateUI(Action action)
+        {
+            MethodInvoker mi = delegate
+            {
+                action();
+            };
+            if (InvokeRequired)
+            {
+                Invoke(mi);
+            }
+            else
+            {
+                mi();
+            }
+        }
+
         private void Analyze()
         {
-            listAnalysis.Items.Clear();
-
-            var entityAttributes = GetSelectedEntityAttributes();
-            foreach (var entity in entityAttributes)
+            PopulateListAnalysisWithSelectedItems();
+            foreach (ListViewGroup entity in listAnalysis.Groups)
             {
-                var group = listAnalysis.Groups.Add(entity.Key, $"{entity.Key})");
-                var item = new ListViewItem(group);
-                item.Name = "counting";
-                item.Text = "Counting records...";
-                listAnalysis.Items.Add(item);
-                var fetchAll = $"<fetch aggregate='true' ><entity name='{entity.Key}' ><attribute name='createdon' alias='Count' aggregate='count' /></entity></fetch>";
-                try
+                var asyncinfo = new WorkAsyncInfo
                 {
-                    var resultAll = Service.RetrieveMultiple(new FetchExpression(fetchAll));
-                    group.Header = $"{entity.Key} - {((AliasedValue)resultAll.Entities[0].Attributes["Count"]).Value} records";
-                    listAnalysis.Items.Remove(item);
-                }
-                catch (Exception ex)
-                {
-                    group.Header = $"{entity.Key} - Unable to retrieve record count";
-                    item.Text = ex.Message;
-                }
-                foreach (var attribute in entity.Value)
-                {
-                    item = new ListViewItem(group);
-                    item.Name = attribute;
-                    item.Text = attribute;
-                    var subitem = item.SubItems.Add(attribute);
-                    subitem.Tag = null;
-                    listAnalysis.Items.Add(item);
-                }
-                AnalyzeNextAttribute();
+                    Message = $"Counting records for\n  {entity.Name}",
+                    AsyncArgument = entity,
+                    Work = (worker, args) =>
+                    {
+                        var group = args.Argument as ListViewGroup;
+                        var entityName = group.Name;
+                        var fetchAll = $"<fetch aggregate='true' ><entity name='{entityName}' ><attribute name='createdon' alias='Count' aggregate='count' /></entity></fetch>";
+                        EntityCollection fetchResult = null;
+                        try
+                        {
+                            fetchResult = Service.RetrieveMultiple(new FetchExpression(fetchAll));
+                        }
+                        finally
+                        {
+                            var value = ((AliasedValue)fetchResult.Entities[0].Attributes["Count"]).Value as int?;
+                            args.Result = new Tuple<ListViewGroup, int?>(group, value);
+                        }
+                    },
+                    PostWorkCallBack = (args) =>
+                    {
+                        var result = args.Result as Tuple<ListViewGroup, int?>;
+                        if (result == null)
+                        {
+                            MessageBox.Show($"Error while counting total record count for {entity.Header}", "Analyze", MessageBoxButtons.OKCancel, MessageBoxIcon.Error);
+                            return;
+                        }
+                        var group = result.Item1;
+                        var value = result.Item2;
+                        if (value == null)
+                        {
+                            group.Header = $"{entity.Header} - Unable to retrieve record count";
+                            if (args.Error != null)
+                            {
+                                AddItemToGroup(group, "error", args.Error.Message);
+                            }
+                        }
+                        else
+                        {
+                            group.Header = $"{entity.Header} - {value} records";
+                            foreach (ListViewItem attribute in entity.Items)
+                            {
+                                AnalyzeAttribute(attribute);
+                            }
+                        }
+                    }
+                };
+                WorkAsync(asyncinfo);
             }
         }
 
-        private void AnalyzeNextAttribute()
+        private ListViewItem AddItemToGroup(ListViewGroup group, string name, string text)
         {
-            var attribute = GetNextUnAnalyzedAttribute();
+            var item = new ListViewItem(group);
+            item.Name = name;
+            item.Text = text;
+            UpdateUI(() => { group.ListView.Items.Add(item); });
+            return item;
+        }
+
+        private void AnalyzeAttribute(ListViewItem attribute)
+        {
             var entity = attribute?.Group;
-            if (attribute == null || entity == null)
+            if (attribute != null && entity != null)
             {
-                return;
-            }
-            var fetchAttr = $"<fetch aggregate='true' ><entity name='{entity.Name}' ><attribute name='{attribute.Name}' alias='Count' aggregate='countcolumn' /></entity></fetch>";
+                attribute.SubItems[2].Text = "Counting...";
+                attribute.SubItems[2].BackColor = Color.Yellow;
+                var fetchAttr = $"<fetch aggregate='true' ><entity name='{entity.Name}' ><attribute name='{attribute.Name}' alias='Count' aggregate='countcolumn' /></entity></fetch>";
 
-            var asyncinfo = new WorkAsyncInfo
-            {
-                Message = $"Analyzing {entity.Name}.{attribute.Name}",
-                Work = (worker, args) =>
+                var asyncinfo = new WorkAsyncInfo
                 {
-                    var resultAttr = Service.RetrieveMultiple(new FetchExpression(fetchAttr));
-                    args.Result = ((AliasedValue)resultAttr.Entities[0].Attributes["Count"]).Value;
-                },
-                PostWorkCallBack = (args) =>
-                {
-                    if (args.Error != null)
+                    Message = $"Analyzing {entity.Name}.{attribute.Name}",
+                    Work = (worker, args) =>
                     {
-                        attribute.SubItems.Add(args.Error.Message);
-                    }
-                    else
+                        try
+                        {
+                            var resultAttr = Service.RetrieveMultiple(new FetchExpression(fetchAttr));
+                            var value = ((AliasedValue)resultAttr.Entities[0].Attributes["Count"]).Value as int?;
+                            args.Result = new Tuple<ListViewItem, int?, Exception>(attribute, value, null);
+                        }
+                        catch (Exception ex)
+                        {
+                            args.Result = new Tuple<ListViewItem, int?, Exception>(attribute, null, ex);
+                        }
+                    },
+                    PostWorkCallBack = (args) =>
                     {
-                        attribute.SubItems.Add(args.Result.ToString());
-                        attribute.Tag = args.Result;
+                        var result = args.Result as Tuple<ListViewItem, int?, Exception>;
+                        if (result == null)
+                        {
+                            MessageBox.Show("Fatal unknown error while counting records", "Analyze", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        var attributeItem = result.Item1;
+                        var value = result.Item2;
+                        var ex = result.Item3;
+                        if (value == null)
+                        {
+                            if (ex != null)
+                            {
+                                attributeItem.SubItems[2].Text = ex.Message;
+                            }
+                            else
+                            {
+                                attributeItem.SubItems[2].Text = "failed";
+                            }
+                            attributeItem.SubItems[2].BackColor = Color.Red;
+                        }
+                        else
+                        {
+                            attributeItem.SubItems[2].Text = value.ToString();
+                            attributeItem.SubItems[2].Tag = value;
+                            attributeItem.SubItems[2].BackColor = Color.LightGreen;
+                        }
                     }
-                }
-            };
-            WorkAsync(asyncinfo);
-            AnalyzeNextAttribute();
-        }
-
-        private ListViewItem GetNextUnAnalyzedAttribute()
-        {
-            foreach (ListViewItem item in listAnalysis.Items)
-            {
-                if (item.Tag == null)
-                {
-                    item.Tag = 0;
-                    return item;
-                }
+                };
+                WorkAsync(asyncinfo);
             }
-            return null;
         }
 
         private void listAttributes_ItemChecked(object sender, ItemCheckedEventArgs e)
@@ -277,6 +334,35 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             //Execute
             var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
             linkConvertJob.Text = resp.JobId.ToString();
+        }
+
+        private void PopulateListAnalysisWithSelectedItems()
+        {
+            listAnalysis.Items.Clear();
+            listAnalysis.Groups.Clear();
+            var groups = new Dictionary<string, ListViewGroup>();
+            foreach (ListViewItem item in listAttributes.CheckedItems)
+            {
+                var groupname = item.Group.Name;
+                ListViewGroup group;
+                if (groups.ContainsKey(groupname))
+                {
+                    group = groups[groupname];
+                }
+                else
+                {
+                    group = new ListViewGroup(groupname, item.Group.Header);
+                    listAnalysis.Groups.Add(group);
+                    groups.Add(groupname, group);
+                }
+                var newItem = new ListViewItem(item.Text, group);
+                newItem.Name = item.Name;
+                newItem.UseItemStyleForSubItems = false;
+                newItem.SubItems.Add(item.Name);
+                newItem.SubItems.Add("Waiting");
+                newItem.SubItems[2].BackColor = Color.LightGray;
+                listAnalysis.Items.Add(newItem);
+            }
         }
 
         private EntityAttributeCollection GetSelectedEntityAttributes()
