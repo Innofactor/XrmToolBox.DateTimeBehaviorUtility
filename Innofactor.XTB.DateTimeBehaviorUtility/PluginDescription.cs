@@ -6,8 +6,8 @@
     using XrmToolBox.Extensibility.Interfaces;
 
     [Export(typeof(IXrmToolBoxPlugin)),
-    ExportMetadata("Name", "DateTime Behavior Utility"),
-    ExportMetadata("Description", "Do things with DateTime behavior"),
+    ExportMetadata("Name", "DateTime Behavior Utility BETA"),
+    ExportMetadata("Description", "Analyze and manipulate attributes and data regarding DateTime behavior"),
     ExportMetadata("SmallImageBase64", Constants.B64_IMAGE_SMALL), 
     ExportMetadata("BigImageBase64", Constants.B64_IMAGE_LARGE), 
     ExportMetadata("BackgroundColor", "#ffffff"), // Use a HTML color name
