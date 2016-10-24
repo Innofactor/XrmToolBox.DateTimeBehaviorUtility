@@ -75,7 +75,7 @@
             this.btnLoadAttributes});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1068, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1051, 25);
             this.toolStrip1.TabIndex = 0;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -174,8 +174,9 @@
             this.pnlActions.Controls.Add(this.gbDateOnly);
             this.pnlActions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pnlActions.Location = new System.Drawing.Point(560, 25);
+            this.pnlActions.MinimumSize = new System.Drawing.Size(360, 0);
             this.pnlActions.Name = "pnlActions";
-            this.pnlActions.Size = new System.Drawing.Size(508, 459);
+            this.pnlActions.Size = new System.Drawing.Size(491, 459);
             this.pnlActions.TabIndex = 3;
             // 
             // gbAnalyze
@@ -186,7 +187,7 @@
             this.gbAnalyze.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbAnalyze.Location = new System.Drawing.Point(0, 0);
             this.gbAnalyze.Name = "gbAnalyze";
-            this.gbAnalyze.Size = new System.Drawing.Size(508, 236);
+            this.gbAnalyze.Size = new System.Drawing.Size(491, 236);
             this.gbAnalyze.TabIndex = 1;
             this.gbAnalyze.TabStop = false;
             this.gbAnalyze.Text = "Analyze";
@@ -205,7 +206,7 @@
             this.listAnalysis.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
             this.listAnalysis.Location = new System.Drawing.Point(6, 44);
             this.listAnalysis.Name = "listAnalysis";
-            this.listAnalysis.Size = new System.Drawing.Size(496, 186);
+            this.listAnalysis.Size = new System.Drawing.Size(479, 186);
             this.listAnalysis.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listAnalysis.TabIndex = 4;
             this.listAnalysis.UseCompatibleStateImageBehavior = false;
@@ -246,7 +247,7 @@
             // 
             this.btnAnalyze.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnAnalyze.Enabled = false;
-            this.btnAnalyze.Location = new System.Drawing.Point(352, 15);
+            this.btnAnalyze.Location = new System.Drawing.Point(335, 15);
             this.btnAnalyze.Name = "btnAnalyze";
             this.btnAnalyze.Size = new System.Drawing.Size(140, 23);
             this.btnAnalyze.TabIndex = 1;
@@ -259,7 +260,7 @@
             this.splitter2.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.splitter2.Location = new System.Drawing.Point(0, 236);
             this.splitter2.Name = "splitter2";
-            this.splitter2.Size = new System.Drawing.Size(508, 5);
+            this.splitter2.Size = new System.Drawing.Size(491, 5);
             this.splitter2.TabIndex = 2;
             this.splitter2.TabStop = false;
             // 
@@ -278,7 +279,7 @@
             this.gbDateOnly.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.gbDateOnly.Location = new System.Drawing.Point(0, 241);
             this.gbDateOnly.Name = "gbDateOnly";
-            this.gbDateOnly.Size = new System.Drawing.Size(508, 218);
+            this.gbDateOnly.Size = new System.Drawing.Size(491, 218);
             this.gbDateOnly.TabIndex = 0;
             this.gbDateOnly.TabStop = false;
             this.gbDateOnly.Text = "DateOnly";
@@ -360,7 +361,7 @@
             // 
             this.btnConvertDateOnly.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnConvertDateOnly.Enabled = false;
-            this.btnConvertDateOnly.Location = new System.Drawing.Point(352, 139);
+            this.btnConvertDateOnly.Location = new System.Drawing.Point(335, 139);
             this.btnConvertDateOnly.Name = "btnConvertDateOnly";
             this.btnConvertDateOnly.Size = new System.Drawing.Size(140, 23);
             this.btnConvertDateOnly.TabIndex = 2;
@@ -397,7 +398,7 @@
             this.Controls.Add(this.pnlAttributes);
             this.Controls.Add(this.toolStrip1);
             this.Name = "DateTimeBehaviorUtility";
-            this.Size = new System.Drawing.Size(1068, 484);
+            this.Size = new System.Drawing.Size(1051, 484);
             this.ConnectionUpdated += new XrmToolBox.Extensibility.PluginControlBase.ConnectionUpdatedHandler(this.DateTimeBehaviorUtility_ConnectionUpdated);
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
