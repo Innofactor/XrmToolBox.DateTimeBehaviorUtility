@@ -47,8 +47,6 @@
             this.colAnalyzeLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAnalyzeDataCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colAnalyzeTimeCount = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.label6 = new System.Windows.Forms.Label();
-            this.btnAnalyze = new System.Windows.Forms.Button();
             this.splitter2 = new System.Windows.Forms.Splitter();
             this.gbDateOnly = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -61,6 +59,9 @@
             this.btnConvertDateOnly = new System.Windows.Forms.Button();
             this.linkConvertRequestUrl = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnAnalyze = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
             this.pnlActions.SuspendLayout();
@@ -72,7 +73,10 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnClose,
-            this.btnLoadAttributes});
+            this.toolStripSeparator2,
+            this.btnLoadAttributes,
+            this.toolStripSeparator1,
+            this.btnAnalyze});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1051, 25);
@@ -182,15 +186,13 @@
             // gbAnalyze
             // 
             this.gbAnalyze.Controls.Add(this.listAnalysis);
-            this.gbAnalyze.Controls.Add(this.label6);
-            this.gbAnalyze.Controls.Add(this.btnAnalyze);
             this.gbAnalyze.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbAnalyze.Location = new System.Drawing.Point(0, 0);
             this.gbAnalyze.Name = "gbAnalyze";
             this.gbAnalyze.Size = new System.Drawing.Size(491, 236);
             this.gbAnalyze.TabIndex = 1;
             this.gbAnalyze.TabStop = false;
-            this.gbAnalyze.Text = "Analyze";
+            this.gbAnalyze.Text = "Analysis";
             // 
             // listAnalysis
             // 
@@ -204,9 +206,9 @@
             this.colAnalyzeTimeCount});
             this.listAnalysis.FullRowSelect = true;
             this.listAnalysis.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listAnalysis.Location = new System.Drawing.Point(6, 44);
+            this.listAnalysis.Location = new System.Drawing.Point(6, 20);
             this.listAnalysis.Name = "listAnalysis";
-            this.listAnalysis.Size = new System.Drawing.Size(479, 186);
+            this.listAnalysis.Size = new System.Drawing.Size(479, 210);
             this.listAnalysis.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listAnalysis.TabIndex = 4;
             this.listAnalysis.UseCompatibleStateImageBehavior = false;
@@ -233,27 +235,6 @@
             this.colAnalyzeTimeCount.Text = "Contains time";
             this.colAnalyzeTimeCount.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.colAnalyzeTimeCount.Width = 108;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 20);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(189, 13);
-            this.label6.TabIndex = 3;
-            this.label6.Text = "Analyze contents of selected attributes";
-            // 
-            // btnAnalyze
-            // 
-            this.btnAnalyze.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAnalyze.Enabled = false;
-            this.btnAnalyze.Location = new System.Drawing.Point(335, 15);
-            this.btnAnalyze.Name = "btnAnalyze";
-            this.btnAnalyze.Size = new System.Drawing.Size(140, 23);
-            this.btnAnalyze.TabIndex = 1;
-            this.btnAnalyze.Text = "Analyze attributes";
-            this.btnAnalyze.UseVisualStyleBackColor = true;
-            this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
             // 
             // splitter2
             // 
@@ -389,6 +370,27 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Convert DateOnly values in selected attributes using";
             // 
+            // btnAnalyze
+            // 
+            this.btnAnalyze.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.btnAnalyze.Enabled = false;
+            this.btnAnalyze.Image = ((System.Drawing.Image)(resources.GetObject("btnAnalyze.Image")));
+            this.btnAnalyze.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnAnalyze.Name = "btnAnalyze";
+            this.btnAnalyze.Size = new System.Drawing.Size(98, 22);
+            this.btnAnalyze.Text = "Analyze selected";
+            this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
+            // 
             // DateTimeBehaviorUtility
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -406,7 +408,6 @@
             this.pnlAttributes.PerformLayout();
             this.pnlActions.ResumeLayout(false);
             this.gbAnalyze.ResumeLayout(false);
-            this.gbAnalyze.PerformLayout();
             this.gbDateOnly.ResumeLayout(false);
             this.gbDateOnly.PerformLayout();
             this.ResumeLayout(false);
@@ -434,7 +435,6 @@
         private System.Windows.Forms.GroupBox gbAnalyze;
         private System.Windows.Forms.Button btnConvertDateOnly;
         private System.Windows.Forms.Splitter splitter2;
-        private System.Windows.Forms.Button btnAnalyze;
         private System.Windows.Forms.LinkLabel linkConvertJob;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.CheckBox cbAutoConvert;
@@ -442,11 +442,13 @@
         private System.Windows.Forms.ComboBox cmbConversionRule;
         private System.Windows.Forms.ComboBox cmbCountryCodes;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.ListView listAnalysis;
         private System.Windows.Forms.ColumnHeader colAnalyzeAttribute;
         private System.Windows.Forms.ColumnHeader colAnalyzeLogicalName;
         private System.Windows.Forms.ColumnHeader colAnalyzeDataCount;
         private System.Windows.Forms.ColumnHeader colAnalyzeTimeCount;
+        private System.Windows.Forms.ToolStripButton btnAnalyze;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }
