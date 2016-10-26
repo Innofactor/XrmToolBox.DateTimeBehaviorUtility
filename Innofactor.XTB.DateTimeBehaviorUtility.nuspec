@@ -17,7 +17,7 @@
     <copyright>Copyright 2016 Innofactor AB</copyright>
     <tags>XrmToolBox Plugins DateTimeBehaviorUtility</tags>
     <dependencies>
-      <dependency id="XrmToolBox" version="1.2016.3.30" />
+      <dependency id="XrmToolBox" version="1.2016.10.2" />
     </dependencies>
   </metadata>
   <files>
