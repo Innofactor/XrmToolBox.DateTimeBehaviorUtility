@@ -428,20 +428,24 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void btnConvertDateOnly_Click(object sender, EventArgs e)
         {
-            var tz = cmbCountryCodes.SelectedItem as CRMTimeZone;
-
-            var req = new ConvertDateAndTimeBehaviorRequest();
-            req.Attributes = GetSelectedEntityAttributes();
-            req.ConversionRule = cmbConversionRule.SelectedItem.ToString();
-            if (tz != null)
+            if (DialogResult.Yes == MessageBox.Show("This action will update data on all records for selected attributes in connected organization.\n\nUse with caution!\n\nContinue?", "Convert data", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation))
             {
-                req.TimeZoneCode = tz.TimeZoneCode;
-            }
-            req.AutoConvert = cbAutoConvert.Checked;
+                var tz = cmbCountryCodes.SelectedItem as CRMTimeZone;
 
-            //Execute
-            var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
-            linkConvertJob.Text = resp.JobId.ToString();
+                var req = new ConvertDateAndTimeBehaviorRequest();
+                req.Attributes = GetSelectedEntityAttributes();
+                req.ConversionRule = cmbConversionRule.SelectedItem.ToString();
+                if (tz != null)
+                {
+                    req.TimeZoneCode = tz.TimeZoneCode;
+                }
+                req.AutoConvert = cbAutoConvert.Checked;
+
+                //Execute
+                var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
+                linkConvertJob.Text = resp.JobId.ToString();
+                MessageBox.Show("Conversion is performed asynchronously.\nClick the link on the form to open system job and verify the results.", "Convert data", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private EntityAttributeCollection GetSelectedEntityAttributes()
