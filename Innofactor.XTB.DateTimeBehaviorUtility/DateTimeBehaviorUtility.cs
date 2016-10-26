@@ -126,15 +126,19 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
         {
             foreach (var entity in entities.Where(e => e.Attributes.Any()).OrderBy(e => e.DisplayName.UserLocalizedLabel.Label))
             {
-                var group = listAttributes.Groups.Add(entity.LogicalName, $"{entity.DisplayName.UserLocalizedLabel.Label} ({entity.LogicalName})");
+                var group = listAttributes.Groups.Add(entity.LogicalName, "");
+                group.Tag = entity;
+                group.Header = GetGroupHeader(group);
                 foreach (var attr in entity.Attributes.Where(a => a is DateTimeAttributeMetadata).OrderBy(a => a.LogicalName))
                 {
                     var attribute = attr as DateTimeAttributeMetadata;
                     if (attribute != null)
                     {
                         var item = new ListViewItem(group);
+                        item.Tag = attribute;
                         item.Name = attribute.LogicalName;
                         item.Text = attribute.DisplayName.UserLocalizedLabel.Label;
+                        item.UseItemStyleForSubItems = false;
                         item.SubItems.Add(attribute.LogicalName);
                         item.SubItems.Add(attribute.Format.Value.ToString());
                         item.SubItems.Add(attribute.DateTimeBehavior?.Value);
@@ -173,8 +177,9 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void Analyze()
         {
-            PopulateListAnalysisWithSelectedItems();
-            foreach (ListViewGroup entity in listAnalysis.Groups)
+            var groups = listAttributes.Groups.Cast<ListViewGroup>().Where(g => g.Items.Cast<ListViewItem>().Any(i => i.Checked));
+
+            foreach (ListViewGroup entity in groups)
             {
                 var asyncinfo = new WorkAsyncInfo
                 {
@@ -208,7 +213,7 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                         var value = result.Item2;
                         if (value == null)
                         {
-                            group.Header = $"{entity.Header} - Unable to retrieve record count";
+                            group.Header = $"{GetGroupHeader(group)} - Unable to retrieve record count";
                             if (args.Error != null)
                             {
                                 AddItemToGroup(group, "error", args.Error.Message);
@@ -216,8 +221,8 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                         }
                         else
                         {
-                            group.Header = $"{entity.Header} - {value} records";
-                            foreach (ListViewItem attribute in entity.Items)
+                            group.Header = $"{GetGroupHeader(group)} - {value} records";
+                            foreach (ListViewItem attribute in group.Items.Cast<ListViewItem>().Where(i => i.Checked))
                             {
                                 AnalyzeAttribute(attribute);
                             }
@@ -226,6 +231,16 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                 };
                 WorkAsync(asyncinfo);
             }
+        }
+
+        private static string GetGroupHeader(ListViewGroup group)
+        {
+            var entity = group.Tag as EntityMetadata;
+            if (entity != null)
+            {
+                return $"{entity.DisplayName.UserLocalizedLabel.Label} ({entity.LogicalName})";
+            }
+            return group.Name;
         }
 
         private ListViewItem AddItemToGroup(ListViewGroup group, string name, string text)
@@ -237,29 +252,33 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             return item;
         }
 
-        private void AnalyzeAttribute(ListViewItem attribute)
+        private void AnalyzeAttribute(ListViewItem item)
         {
-            var entity = attribute?.Group;
-            if (attribute != null && entity != null)
+            var group = item?.Group;
+            if (item != null && group != null)
             {
-                attribute.SubItems[2].Text = "Counting...";
-                attribute.SubItems[2].BackColor = Color.Yellow;
-                var fetchAttr = $"<fetch aggregate='true' ><entity name='{entity.Name}' ><attribute name='{attribute.Name}' alias='Count' aggregate='countcolumn' /></entity></fetch>";
+                while (item.SubItems.Count < 5)
+                {
+                    item.SubItems.Add("");
+                }
+                item.SubItems[4].Text = "Counting...";
+                item.SubItems[4].BackColor = Color.Yellow;
+                var fetchAttr = $"<fetch aggregate='true' ><entity name='{group.Name}' ><attribute name='{item.Name}' alias='Count' aggregate='countcolumn' /></entity></fetch>";
 
                 var asyncinfo = new WorkAsyncInfo
                 {
-                    Message = $"Analyzing {entity.Name}.{attribute.Name}",
+                    Message = $"Analyzing {group.Name}.{item.Name}",
                     Work = (worker, args) =>
                     {
                         try
                         {
                             var resultAttr = Service.RetrieveMultiple(new FetchExpression(fetchAttr));
                             var value = ((AliasedValue)resultAttr.Entities[0].Attributes["Count"]).Value as int?;
-                            args.Result = new Tuple<ListViewItem, int?, Exception>(attribute, value, null);
+                            args.Result = new Tuple<ListViewItem, int?, Exception>(item, value, null);
                         }
                         catch (Exception ex)
                         {
-                            args.Result = new Tuple<ListViewItem, int?, Exception>(attribute, null, ex);
+                            args.Result = new Tuple<ListViewItem, int?, Exception>(item, null, ex);
                         }
                     },
                     PostWorkCallBack = (args) =>
@@ -277,19 +296,19 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                         {
                             if (ex != null)
                             {
-                                attributeItem.SubItems[2].Text = ex.Message;
+                                attributeItem.SubItems[4].Text = ex.Message;
                             }
                             else
                             {
-                                attributeItem.SubItems[2].Text = "failed";
+                                attributeItem.SubItems[4].Text = "failed";
                             }
-                            attributeItem.SubItems[2].BackColor = Color.Red;
+                            attributeItem.SubItems[4].BackColor = Color.Red;
                         }
                         else
                         {
-                            attributeItem.SubItems[2].Text = value.ToString();
-                            attributeItem.SubItems[2].Tag = value;
-                            attributeItem.SubItems[2].BackColor = Color.LightGreen;
+                            attributeItem.SubItems[4].Text = value.ToString();
+                            attributeItem.SubItems[4].Tag = value;
+                            attributeItem.SubItems[4].BackColor = Color.LightGreen;
                         }
                     }
                 };
@@ -299,10 +318,14 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void listAttributes_ItemChecked(object sender, ItemCheckedEventArgs e)
         {
-            cmbConversionRule.Enabled = listAttributes.CheckedItems.Count > 0;
-            cbAutoConvert.Enabled = listAttributes.CheckedItems.Count > 0;
-            EnableAnalyzeBtn();
-            EnableConvertBtn();
+            try
+            {
+                cmbConversionRule.Enabled = listAttributes.CheckedItems.Count > 0;
+                cbAutoConvert.Enabled = listAttributes.CheckedItems.Count > 0;
+                EnableAnalyzeBtn();
+                EnableConvertBtn();
+            }
+            catch { }
         }
 
         private void EnableConvertBtn()
@@ -334,35 +357,6 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             //Execute
             var resp = Service.Execute(req) as ConvertDateAndTimeBehaviorResponse;
             linkConvertJob.Text = resp.JobId.ToString();
-        }
-
-        private void PopulateListAnalysisWithSelectedItems()
-        {
-            listAnalysis.Items.Clear();
-            listAnalysis.Groups.Clear();
-            var groups = new Dictionary<string, ListViewGroup>();
-            foreach (ListViewItem item in listAttributes.CheckedItems)
-            {
-                var groupname = item.Group.Name;
-                ListViewGroup group;
-                if (groups.ContainsKey(groupname))
-                {
-                    group = groups[groupname];
-                }
-                else
-                {
-                    group = new ListViewGroup(groupname, item.Group.Header);
-                    listAnalysis.Groups.Add(group);
-                    groups.Add(groupname, group);
-                }
-                var newItem = new ListViewItem(item.Text, group);
-                newItem.Name = item.Name;
-                newItem.UseItemStyleForSubItems = false;
-                newItem.SubItems.Add(item.Name);
-                newItem.SubItems.Add("Waiting");
-                newItem.SubItems[2].BackColor = Color.LightGray;
-                listAnalysis.Items.Add(newItem);
-            }
         }
 
         private EntityAttributeCollection GetSelectedEntityAttributes()
