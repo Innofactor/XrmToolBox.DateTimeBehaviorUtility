@@ -433,5 +433,10 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             Guid g;
             linkConvertJob.Enabled = Guid.TryParse(linkConvertJob.Text, out g);
         }
+
+        private void linkNewIssue_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/Innofactor/XrmToolBox.DateTimeBehaviorUtility/issues/new");
+        }
     }
 }

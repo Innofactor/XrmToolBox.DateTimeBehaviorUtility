@@ -42,6 +42,7 @@
             this.colLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colFormat = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colBehavior = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colNotNull = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.pnlActions = new System.Windows.Forms.Panel();
             this.splitter2 = new System.Windows.Forms.Splitter();
@@ -56,7 +57,9 @@
             this.btnConvertDateOnly = new System.Windows.Forms.Button();
             this.linkConvertRequestUrl = new System.Windows.Forms.LinkLabel();
             this.label2 = new System.Windows.Forms.Label();
-            this.colNotNull = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.linkNewIssue = new System.Windows.Forms.LinkLabel();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.toolStrip1.SuspendLayout();
             this.pnlAttributes.SuspendLayout();
             this.pnlActions.SuspendLayout();
@@ -179,6 +182,12 @@
             this.colBehavior.Text = "Behavior";
             this.colBehavior.Width = 108;
             // 
+            // colNotNull
+            // 
+            this.colNotNull.Text = "Contains date";
+            this.colNotNull.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.colNotNull.Width = 87;
+            // 
             // splitter1
             // 
             this.splitter1.Location = new System.Drawing.Point(667, 25);
@@ -189,6 +198,9 @@
             // 
             // pnlActions
             // 
+            this.pnlActions.Controls.Add(this.label7);
+            this.pnlActions.Controls.Add(this.label6);
+            this.pnlActions.Controls.Add(this.linkNewIssue);
             this.pnlActions.Controls.Add(this.splitter2);
             this.pnlActions.Controls.Add(this.gbDateOnly);
             this.pnlActions.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -281,7 +293,7 @@
             // 
             this.linkConvertJob.AutoSize = true;
             this.linkConvertJob.Enabled = false;
-            this.linkConvertJob.Location = new System.Drawing.Point(10, 189);
+            this.linkConvertJob.Location = new System.Drawing.Point(7, 189);
             this.linkConvertJob.Name = "linkConvertJob";
             this.linkConvertJob.Size = new System.Drawing.Size(87, 13);
             this.linkConvertJob.TabIndex = 4;
@@ -293,7 +305,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(10, 176);
+            this.label3.Location = new System.Drawing.Point(7, 176);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(160, 13);
             this.label3.TabIndex = 3;
@@ -331,11 +343,34 @@
             this.label2.TabIndex = 0;
             this.label2.Text = "Convert DateOnly values in selected attributes using";
             // 
-            // colNotNull
+            // linkNewIssue
             // 
-            this.colNotNull.Text = "Contains date";
-            this.colNotNull.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.colNotNull.Width = 87;
+            this.linkNewIssue.AutoSize = true;
+            this.linkNewIssue.Location = new System.Drawing.Point(7, 276);
+            this.linkNewIssue.Name = "linkNewIssue";
+            this.linkNewIssue.Size = new System.Drawing.Size(88, 13);
+            this.linkNewIssue.TabIndex = 3;
+            this.linkNewIssue.TabStop = true;
+            this.linkNewIssue.Text = "Create new issue";
+            this.linkNewIssue.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkNewIssue_LinkClicked);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(7, 240);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(313, 13);
+            this.label6.TabIndex = 4;
+            this.label6.Text = "Suggestions for more functionality related to DateTime attributes?";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(7, 258);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(185, 13);
+            this.label7.TabIndex = 5;
+            this.label7.Text = "Submit an issue to the GitHub project!";
             // 
             // DateTimeBehaviorUtility
             // 
@@ -354,6 +389,7 @@
             this.pnlAttributes.ResumeLayout(false);
             this.pnlAttributes.PerformLayout();
             this.pnlActions.ResumeLayout(false);
+            this.pnlActions.PerformLayout();
             this.gbDateOnly.ResumeLayout(false);
             this.gbDateOnly.PerformLayout();
             this.ResumeLayout(false);
@@ -391,5 +427,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ColumnHeader colNotNull;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.LinkLabel linkNewIssue;
     }
 }
