@@ -35,12 +35,21 @@
             this.btnLoadAttributes = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.btnAnalyze = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.entityToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtFltEntity = new System.Windows.Forms.ToolStripTextBox();
+            this.behaviorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmbFltBehavior = new System.Windows.Forms.ToolStripComboBox();
+            this.formatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmbFltFormat = new System.Windows.Forms.ToolStripComboBox();
+            this.chkFltCanChangeBehavior = new System.Windows.Forms.ToolStripMenuItem();
             this.listAttributes = new System.Windows.Forms.ListView();
             this.colName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colLogicalName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.colFormat = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colBehavior = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colFormat = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.colNotNull = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.colWithTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitter1 = new System.Windows.Forms.Splitter();
             this.gbDateOnly = new System.Windows.Forms.GroupBox();
             this.label5 = new System.Windows.Forms.Label();
@@ -59,7 +68,9 @@
             this.gbAttributes = new System.Windows.Forms.GroupBox();
             this.gbActions = new System.Windows.Forms.GroupBox();
             this.gbSuggestions = new System.Windows.Forms.GroupBox();
-            this.colWithTime = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1.SuspendLayout();
             this.gbDateOnly.SuspendLayout();
             this.gbAttributes.SuspendLayout();
@@ -73,6 +84,7 @@
             this.btnClose,
             this.toolStripSeparator2,
             this.btnLoadAttributes,
+            this.toolStripDropDownButton1,
             this.toolStripSeparator1,
             this.btnAnalyze});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
@@ -121,22 +133,101 @@
             this.btnAnalyze.Text = "Analyze selected";
             this.btnAnalyze.Click += new System.EventHandler(this.btnAnalyze_Click);
             // 
+            // toolStripDropDownButton1
+            // 
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.entityToolStripMenuItem,
+            this.txtFltEntity,
+            this.toolStripSeparator3,
+            this.behaviorToolStripMenuItem,
+            this.cmbFltBehavior,
+            this.toolStripSeparator4,
+            this.formatToolStripMenuItem,
+            this.cmbFltFormat,
+            this.toolStripSeparator5,
+            this.chkFltCanChangeBehavior});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(62, 22);
+            this.toolStripDropDownButton1.Text = "Filter";
+            // 
+            // entityToolStripMenuItem
+            // 
+            this.entityToolStripMenuItem.Name = "entityToolStripMenuItem";
+            this.entityToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.entityToolStripMenuItem.Text = "Entity";
+            // 
+            // txtFltEntity
+            // 
+            this.txtFltEntity.Name = "txtFltEntity";
+            this.txtFltEntity.Size = new System.Drawing.Size(100, 23);
+            this.txtFltEntity.Text = "*";
+            this.txtFltEntity.TextChanged += new System.EventHandler(this.txtFltEntity_TextChanged);
+            // 
+            // behaviorToolStripMenuItem
+            // 
+            this.behaviorToolStripMenuItem.Name = "behaviorToolStripMenuItem";
+            this.behaviorToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.behaviorToolStripMenuItem.Text = "Behavior";
+            // 
+            // cmbFltBehavior
+            // 
+            this.cmbFltBehavior.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFltBehavior.Items.AddRange(new object[] {
+            "All",
+            "UserLocal",
+            "DateOnly",
+            "TimeZoneIndependent"});
+            this.cmbFltBehavior.Name = "cmbFltBehavior";
+            this.cmbFltBehavior.Size = new System.Drawing.Size(121, 23);
+            this.cmbFltBehavior.SelectedIndexChanged += new System.EventHandler(this.cmbFltBehavior_SelectedIndexChanged);
+            // 
+            // formatToolStripMenuItem
+            // 
+            this.formatToolStripMenuItem.Name = "formatToolStripMenuItem";
+            this.formatToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.formatToolStripMenuItem.Text = "Format";
+            // 
+            // cmbFltFormat
+            // 
+            this.cmbFltFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbFltFormat.Items.AddRange(new object[] {
+            "All",
+            "DateOnly",
+            "DateAndTime"});
+            this.cmbFltFormat.Name = "cmbFltFormat";
+            this.cmbFltFormat.Size = new System.Drawing.Size(121, 23);
+            this.cmbFltFormat.SelectedIndexChanged += new System.EventHandler(this.cmbFltFormat_SelectedIndexChanged);
+            // 
+            // chkFltCanChangeBehavior
+            // 
+            this.chkFltCanChangeBehavior.Checked = true;
+            this.chkFltCanChangeBehavior.CheckOnClick = true;
+            this.chkFltCanChangeBehavior.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkFltCanChangeBehavior.Name = "chkFltCanChangeBehavior";
+            this.chkFltCanChangeBehavior.Size = new System.Drawing.Size(182, 22);
+            this.chkFltCanChangeBehavior.Text = "CanChangeBehavior";
+            this.chkFltCanChangeBehavior.CheckedChanged += new System.EventHandler(this.chkFltCanChangeBehavior_CheckedChanged);
+            // 
             // listAttributes
             // 
+            this.listAttributes.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.listAttributes.CheckBoxes = true;
             this.listAttributes.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colName,
             this.colLogicalName,
-            this.colFormat,
             this.colBehavior,
+            this.colFormat,
             this.colNotNull,
             this.colWithTime});
-            this.listAttributes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listAttributes.FullRowSelect = true;
             this.listAttributes.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.listAttributes.Location = new System.Drawing.Point(3, 16);
+            this.listAttributes.Location = new System.Drawing.Point(6, 19);
             this.listAttributes.Name = "listAttributes";
-            this.listAttributes.Size = new System.Drawing.Size(694, 403);
+            this.listAttributes.Size = new System.Drawing.Size(688, 397);
             this.listAttributes.Sorting = System.Windows.Forms.SortOrder.Ascending;
             this.listAttributes.TabIndex = 0;
             this.listAttributes.UseCompatibleStateImageBehavior = false;
@@ -153,21 +244,27 @@
             this.colLogicalName.Text = "Logical Name";
             this.colLogicalName.Width = 148;
             // 
-            // colFormat
-            // 
-            this.colFormat.Text = "Format";
-            this.colFormat.Width = 103;
-            // 
             // colBehavior
             // 
             this.colBehavior.Text = "Behavior";
             this.colBehavior.Width = 108;
+            // 
+            // colFormat
+            // 
+            this.colFormat.Text = "Format";
+            this.colFormat.Width = 103;
             // 
             // colNotNull
             // 
             this.colNotNull.Text = "Contains date";
             this.colNotNull.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.colNotNull.Width = 90;
+            // 
+            // colWithTime
+            // 
+            this.colWithTime.Text = "Contains time";
+            this.colWithTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.colWithTime.Width = 90;
             // 
             // splitter1
             // 
@@ -374,11 +471,20 @@
             this.gbSuggestions.TabStop = false;
             this.gbSuggestions.Text = "Suggestions";
             // 
-            // colWithTime
+            // toolStripSeparator3
             // 
-            this.colWithTime.Text = "Contains time";
-            this.colWithTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.colWithTime.Width = 81;
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(179, 6);
+            // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(179, 6);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(179, 6);
             // 
             // DateTimeBehaviorUtility
             // 
@@ -438,5 +544,16 @@
         private System.Windows.Forms.GroupBox gbActions;
         private System.Windows.Forms.GroupBox gbSuggestions;
         private System.Windows.Forms.ColumnHeader colWithTime;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem entityToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox txtFltEntity;
+        private System.Windows.Forms.ToolStripMenuItem behaviorToolStripMenuItem;
+        private System.Windows.Forms.ToolStripComboBox cmbFltBehavior;
+        private System.Windows.Forms.ToolStripMenuItem formatToolStripMenuItem;
+        private System.Windows.Forms.ToolStripComboBox cmbFltFormat;
+        private System.Windows.Forms.ToolStripMenuItem chkFltCanChangeBehavior;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
     }
 }

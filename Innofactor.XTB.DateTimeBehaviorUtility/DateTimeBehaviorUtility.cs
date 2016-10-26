@@ -21,6 +21,8 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 {
     public partial class DateTimeBehaviorUtility : PluginControlBase, IGitHubPlugin
     {
+        private EntityMetadataCollection metadata;
+
         public string RepositoryName { get { return "XrmToolBox.DateTimeBehaviorUtility"; } }
 
         public string UserName { get { return "Innofactor"; } }
@@ -31,8 +33,10 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
         {
             InitializeComponent();
             //Add items to comboBox
-            LoadComboBox();
+            LoadConversionRules();
             LoadCountryCodes();
+            cmbFltBehavior.SelectedIndex = 0;
+            cmbFltFormat.SelectedIndex = 0;
         }
 
         private void btnClose_Click(object sender, EventArgs e)
@@ -49,6 +53,7 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             {
                 listAttributes.Items.Clear();
                 listAttributes.Groups.Clear();
+                metadata = null;
             }
             else
             {
@@ -63,51 +68,59 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
 
         private void LoadAttributes()
         {
-            Enabled = false;
-            listAttributes.Items.Clear();
-            listAttributes.Groups.Clear();
-            var asyncinfo = new WorkAsyncInfo()
+            if (Service == null)
             {
-                Message = "Loading entities and attributes",
-                Work = (a, args) =>
+                return;
+            }
+            Enabled = false;
+            if (metadata == null)
+            {
+                var asyncinfo = new WorkAsyncInfo()
                 {
-                    var eqe = new EntityQueryExpression();
-                    eqe.Properties = new MetadataPropertiesExpression("DisplayName", "Attributes");
-                    eqe.Criteria.Conditions.Add(new MetadataConditionExpression("IsCustomizable", MetadataConditionOperator.Equals, true));
-                    var aqe = new AttributeQueryExpression();
-                    aqe.Properties = new MetadataPropertiesExpression();
-                    aqe.Properties.AllProperties = true;
-                    aqe.Criteria.Conditions.Add(new MetadataConditionExpression("AttributeType", MetadataConditionOperator.Equals, AttributeTypeCode.DateTime));
-                    aqe.Criteria.Conditions.Add(new MetadataConditionExpression("CanChangeDateTimeBehavior", MetadataConditionOperator.Equals, true));
-                    eqe.AttributeQuery = aqe;
-                    var req = new RetrieveMetadataChangesRequest()
+                    Message = "Loading entities and attributes",
+                    Work = (a, args) =>
                     {
-                        Query = eqe,
-                        ClientVersionStamp = null
-                    };
-                    args.Result = Service.Execute(req) as RetrieveMetadataChangesResponse;
-                },
-                PostWorkCallBack = (args) =>
-                {
-                    if (args.Error != null)
+                        var eqe = new EntityQueryExpression();
+                        eqe.Properties = new MetadataPropertiesExpression("DisplayName", "Attributes");
+                        eqe.Criteria.Conditions.Add(new MetadataConditionExpression("IsCustomizable", MetadataConditionOperator.Equals, true));
+                        var aqe = new AttributeQueryExpression();
+                        aqe.Properties = new MetadataPropertiesExpression();
+                        aqe.Properties.AllProperties = true;
+                        aqe.Criteria.Conditions.Add(new MetadataConditionExpression("AttributeType", MetadataConditionOperator.Equals, AttributeTypeCode.DateTime));
+                        //aqe.Criteria.Conditions.Add(new MetadataConditionExpression("CanChangeDateTimeBehavior", MetadataConditionOperator.Equals, true));
+                        eqe.AttributeQuery = aqe;
+                        var req = new RetrieveMetadataChangesRequest()
+                        {
+                            Query = eqe,
+                            ClientVersionStamp = null
+                        };
+                        args.Result = Service.Execute(req) as RetrieveMetadataChangesResponse;
+                    },
+                    PostWorkCallBack = (args) =>
                     {
-                        MessageBox.Show($"Failed to load metadata:\n{args.Error.Message}", "Load", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
+                        if (args.Error != null)
+                        {
+                            MessageBox.Show($"Failed to load metadata:\n{args.Error.Message}", "Load", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        if (!(args.Result is RetrieveMetadataChangesResponse))
+                        {
+                            MessageBox.Show($"Unexpected result:\n{args.Result}", "Load", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        metadata = ((RetrieveMetadataChangesResponse)args.Result).EntityMetadata;
+                        PopulateAttributes();
                     }
-                    if (!(args.Result is RetrieveMetadataChangesResponse))
-                    {
-                        MessageBox.Show($"Unexpected result:\n{args.Result}", "Load", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-                    var entities = ((RetrieveMetadataChangesResponse)args.Result).EntityMetadata;
-                    PopulateAttributes(entities);
-                }
-            };
-            WorkAsync(asyncinfo);
-
+                };
+                WorkAsync(asyncinfo);
+            }
+            else
+            {
+                PopulateAttributes();
+            }
         }
 
-        private void LoadComboBox()
+        private void LoadConversionRules()
         {
             cmbConversionRule.Items.Add(DateTimeBehaviorConversionRule.CreatedByTimeZone.Value);
             cmbConversionRule.Items.Add(DateTimeBehaviorConversionRule.LastUpdatedByTimeZone.Value);
@@ -122,14 +135,30 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             cmbCountryCodes.Items.AddRange(new CRMTimeZoneList().ToArray());
         }
 
-        private void PopulateAttributes(EntityMetadataCollection entities)
+        private void PopulateAttributes()
         {
-            foreach (var entity in entities.Where(e => e.Attributes.Any()).OrderBy(e => e.DisplayName.UserLocalizedLabel.Label))
+            listAttributes.Items.Clear();
+            listAttributes.Groups.Clear();
+            if (metadata == null)
+            {
+                LoadAttributes();
+                return;
+            }
+            var entityFilter = txtFltEntity.Text;
+            var behavior = cmbFltBehavior.Text.Replace("All", "");
+            var format = cmbFltFormat.Text.Replace("All", "");
+            var canChange = chkFltCanChangeBehavior.Checked;
+            foreach (var entity in metadata
+                .Where(e => FilterEntity(e, entityFilter) && e.Attributes
+                    .Any(a => FilterAttribute(a as DateTimeAttributeMetadata, behavior, format, canChange)))
+                .OrderBy(e => e.DisplayName?.UserLocalizedLabel?.Label))
             {
                 var group = listAttributes.Groups.Add(entity.LogicalName, "");
                 group.Tag = entity;
                 group.Header = GetGroupHeader(group);
-                foreach (var attr in entity.Attributes.Where(a => a is DateTimeAttributeMetadata).OrderBy(a => a.LogicalName))
+                foreach (var attr in entity.Attributes
+                    .Where(a => a is DateTimeAttributeMetadata && FilterAttribute(a as DateTimeAttributeMetadata, behavior, format, canChange))
+                    .OrderBy(a => a.LogicalName))
                 {
                     var attribute = attr as DateTimeAttributeMetadata;
                     if (attribute != null)
@@ -140,13 +169,69 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
                         item.Text = attribute.DisplayName.UserLocalizedLabel.Label;
                         item.UseItemStyleForSubItems = false;
                         item.SubItems.Add(attribute.LogicalName);
-                        item.SubItems.Add(attribute.Format.Value.ToString());
                         item.SubItems.Add(attribute.DateTimeBehavior?.Value);
+                        item.SubItems.Add(attribute.Format.Value.ToString());
                         listAttributes.Items.Add(item);
                     }
                 }
             }
             Enabled = true;
+        }
+
+        private bool FilterEntity(EntityMetadata entity, string entityFilter)
+        {
+            if (entity == null)
+            {
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(entityFilter))
+            {   // No filter
+                return true;
+            }
+            var logicalName = entity.LogicalName.ToLowerInvariant();
+            var displayName = entity.DisplayName?.UserLocalizedLabel?.Label?.ToLowerInvariant();
+            entityFilter = entityFilter.ToLowerInvariant();
+            if (string.IsNullOrEmpty(displayName))
+            {
+                displayName = logicalName;
+            }
+            if (!entityFilter.Contains("*"))
+            {   // Exact match
+                return
+                    logicalName.Equals(entityFilter, StringComparison.InvariantCulture) ||
+                    displayName.Equals(entityFilter, StringComparison.InvariantCulture);
+            }
+            else if (entityFilter.StartsWith("*") && entityFilter.EndsWith("*"))
+            {   // Contains
+                entityFilter = entityFilter.Replace("*", "");
+                return
+                    logicalName.Contains(entityFilter) ||
+                    displayName.Contains(entityFilter);
+            }
+            else if (entityFilter.StartsWith("*"))
+            {   // Leading wildcard
+                entityFilter = entityFilter.Replace("*", "");
+                return
+                    logicalName.EndsWith(entityFilter, StringComparison.InvariantCulture) ||
+                    displayName.EndsWith(entityFilter, StringComparison.InvariantCulture);
+            }
+            else if (entityFilter.EndsWith("*"))
+            {   // Leading wildcard
+                entityFilter = entityFilter.Replace("*", "");
+                return
+                    logicalName.StartsWith(entityFilter, StringComparison.InvariantCulture) ||
+                    displayName.StartsWith(entityFilter, StringComparison.InvariantCulture);
+            }
+            return false;
+        }
+
+        private bool FilterAttribute(DateTimeAttributeMetadata attribute, string behavior, string format, bool canchange)
+        {
+            return
+                attribute != null &&
+                (string.IsNullOrWhiteSpace(behavior) || behavior == attribute.DateTimeBehavior?.Value) &&
+                (string.IsNullOrWhiteSpace(format) || format == attribute.Format.Value.ToString()) &&
+                (!canchange || attribute.CanChangeDateTimeBehavior.Value);
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -238,7 +323,7 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
             var entity = group.Tag as EntityMetadata;
             if (entity != null)
             {
-                return $"{entity.DisplayName.UserLocalizedLabel.Label} ({entity.LogicalName})";
+                return $"{entity.DisplayName?.UserLocalizedLabel?.Label} ({entity.LogicalName})";
             }
             return group.Name;
         }
@@ -437,6 +522,26 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
         private void linkNewIssue_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://github.com/Innofactor/XrmToolBox.DateTimeBehaviorUtility/issues/new");
+        }
+
+        private void txtFltEntity_TextChanged(object sender, EventArgs e)
+        {
+            PopulateAttributes();
+        }
+
+        private void cmbFltBehavior_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PopulateAttributes();
+        }
+
+        private void cmbFltFormat_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            PopulateAttributes();
+        }
+
+        private void chkFltCanChangeBehavior_CheckedChanged(object sender, EventArgs e)
+        {
+            PopulateAttributes();
         }
     }
 }
