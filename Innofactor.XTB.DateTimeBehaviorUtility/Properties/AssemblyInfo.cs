@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("DateTime Behavior Utility")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Jonas Rapp, Rickard Sundling, Innofactor AB")]
+[assembly: AssemblyCompany("Jonas Rapp and Rickard Sundling, Innofactor AB")]
 [assembly: AssemblyProduct("DateTimeBehaviorUtility")]
 [assembly: AssemblyCopyright("Copyright © Innofactor AB 2016")]
 [assembly: AssemblyTrademark("")]
