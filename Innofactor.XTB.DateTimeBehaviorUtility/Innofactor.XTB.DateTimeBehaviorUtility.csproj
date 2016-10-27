@@ -145,13 +145,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir Plugins
+    <PostBuildEvent>if $(ConfigurationName) == Debug (
+mkdir Plugins
 copy Innofactor.*.dll Plugins\*.*
 copy Innofactor.*.pdb Plugins\*.*
 del Innofactor.*.dll
 del Innofactor.*.pdb
-
-</PostBuildEvent>
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
