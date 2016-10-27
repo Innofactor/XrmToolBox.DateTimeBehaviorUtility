@@ -547,5 +547,15 @@ namespace Innofactor.XTB.DateTimeBehaviorUtility
         {
             PopulateAttributes();
         }
+
+        private void linkLabel1_LinkClicked_1(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/Innofactor/XrmToolBox.DateTimeBehaviorUtility/issues/5");
+        }
+
+        private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://github.com/Innofactor/XrmToolBox.DateTimeBehaviorUtility/issues/6");
+        }
     }
 }
